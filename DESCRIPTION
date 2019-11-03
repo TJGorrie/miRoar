@@ -1,0 +1,10 @@
+Package: miRoar
+Title: miRoar
+Version: 0.0.1
+Authors@R: person('Tyler', 'Gorrie-Stone', email = 'tgorri@essex.ac.uk', role = c('aut', 'cre'))
+Description: Analyse miR RT-qPCR data from EDS files
+Depends: R (>= 3.1.0)
+Suggests: 
+Collate: 
+License:
+LazyData: true
