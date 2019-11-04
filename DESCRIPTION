@@ -5,6 +5,7 @@ Authors@R: person('Tyler', 'Gorrie-Stone', email = 'tgorri@essex.ac.uk', role = 
 Description: Analyse miR RT-qPCR data from EDS files
 Depends: R (>= 3.1.0)
 Suggests: 
-Collate: 
+Collate: norm.R inout.R
 License:
 LazyData: true
+RoxygenNote: 6.1.1
