@@ -27,7 +27,6 @@ readEDS <- function(file, verbose = TRUE, suppress = FALSE){
     experiment <- gsub('.eds', '', file)
     if(verbose) message('Extracting: ', experiment)
     unzip(zipfile = file, exdir = experiment)
-    on.exit(unlink(experiment, recursive = TRUE, force = TRUE), add = TRUE)
     # On Function exit - clean up files!
     # Structure is: apldbio/sds/
     newpath <- sprintf('%s/apldbio/sds/', experiment)
@@ -46,7 +45,7 @@ readEDS <- function(file, verbose = TRUE, suppress = FALSE){
       drn[[length(drn)+1]] <- rlTabSub12[[i+2]][-1]
       crtmat[[length(crtmat)+1]] <- rlTabSub12[[i+3]][-1]
     }
-    cts <- as.data.frame(do.call('rbind', cts), stringsAsFactors = F)
+    cts <- as.data.frame(do.call('rbind', cts), stringsAsFactors = FALSE)
     colnames(cts) <- rlTab[[2]]
     rn <- do.call('rbind', rn)
     drn <- do.call('rbind', drn)
@@ -57,13 +56,13 @@ readEDS <- function(file, verbose = TRUE, suppress = FALSE){
     splitCts <- split(cts, cts[['Sample Name']])
 
     # amp_score.txt processing
-    amp <- read.table(sprintf('%samp_score.txt', newpath), skip=1,
-                      stringsAsFactors=F, sep='\t',header=T)
+    amp <- read.table(sprintf('%samp_score.txt', newpath), skip = 1,
+                      stringsAsFactors = FALSE, sep = '\t', header = TRUE)
     rownames(amp) <- as.character(amp[,1])
 
     # oa_rox.txt
-    rox <- read.table(sprintf('%soa_rox.txt', newpath), skip=1,
-                    stringsAsFactors=F, sep='\t',header=T)
+    rox <- read.table(sprintf('%soa_rox.txt', newpath), skip = 1,
+                    stringsAsFactors = FALSE, sep='\t', header = TRUE)
     rownames(rox) <- as.character(rox[,1])
 
     # puredyematrix
@@ -79,7 +78,7 @@ readEDS <- function(file, verbose = TRUE, suppress = FALSE){
         crt <- crtmat[x$Well,]
         return(list(x, 'R' = r, 'dR' = dr, 'crtStats' = crt))
     })
-
+    unlink(experiment, recursive = TRUE, force = TRUE)
     return(splitCts)
 }
 
@@ -100,13 +99,15 @@ readEDS <- function(file, verbose = TRUE, suppress = FALSE){
 #' @seealso \code{\link{readEDS}}
 #' @keywords eds
 #' @export
+#' @exportClass miRoar
 batchReadEDS <- function(EDSfiles, directory = FALSE, ...){
+    s = Sys.time()
     # Read multiple EDS files
     # EDSfiles: a vector of eds files or a directory containing EDS files.
-    if(directory) EDSfiles <- dir(EDSfiles, pattern='.eds', ignore.case = TRUE, full.names=T,...) # Allow for recursive through ...
-    names(EDSfiles) <- gsub('.eds', '', basename(EDSfiles), ignore.case=T)
+    if(directory) EDSfiles <- dir(EDSfiles, pattern = '.eds', ignore.case = TRUE, full.names = TRUE,...) # Allow for recursive through ...
+    names(EDSfiles) <- gsub('.eds', '', basename(EDSfiles), ignore.case = TRUE)
     allData <- unlist(lapply(EDSfiles, readEDS, verbose = TRUE,
-                           suppress = TRUE), recursive = F)
+                           suppress = TRUE), recursive = FALSE)
     runname <- strsplit(names(allData), "[.]")
     diff.n <-  length(unique(sapply(lapply(allData, '[[', 1), nrow)))
     if(diff.n > 1){
@@ -154,5 +155,7 @@ batchReadEDS <- function(EDSfiles, directory = FALSE, ...){
  
     #hkgmir <- names(which(table(rownames(biglist[[1]]))==16))
     biglist$FN <- sapply(runname, '[', 1)
+    biglist$history <- data.frame('Submitted' = s, 'Finished' = Sys.time(), 'Comment' = 'Created object')
+    class(biglist) <- 'miRoar'
     return(biglist)
 }

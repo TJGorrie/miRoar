@@ -14,12 +14,39 @@
 #' # readEDS()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
+deltaCt <- function(ct, 
+					method = c('global', 'endogenous','geNorm', 'NormFinder'), 
+					HKs = NULL, 
+					group = NULL,
+					...
+					){
+   UseMethod("deltaCt", ct)
+}
+
+#' Calculate delta Ct values from CT values using a variety of methods
+#'
+#' Calculate delta Ct values using global, endogenous, genorm or normfinder
+#'
+#' @param ct character, The file name to be read in
+#' @param method Logical, whether or not some message are output
+#' @param HKs Logical, controlled by 
+#' @param group 
+#' @param ...
+#' 
+#' @return deltaCT values
+#'
+#' @examples
+#' # readEDS()
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @seealso \code{\link{batchReadEDS}}
 #' @keywords deltaCT CT genorm normfinder
 #' @importFrom NormqPCR geomMean
+#' @importFrom matrixStats colMedians
 #' @export
-deltaCt <- function(ct, 
-					method = c('global', 'endogenous','genorm', 'normfinder'), 
+deltaCt.matrix <- function(ct, 
+					method = c('global', 'endogenous','geNorm', 'NormFinder'), 
 					HKs = NULL, 
 					group = NULL,
 					...
@@ -30,15 +57,17 @@ deltaCt <- function(ct,
 							'global' = colMedians(na.omit(ct)),
 							'endogenous' = {
 								stopifnot(is.character(HKs))
-							    apply(ct[HKs, ], 2, geomMean, na.rm = T)
+							    apply(as.matrix(ct[HKs, ]), 2, geomMean, na.rm = T)
 							}, # handle for multiple HKs? geomMean?
-							'genorm' = {
+							'geNorm' = {
 								stopifnot(is.numeric(HKs))
 								selectHKwrapper(ct, method = method, minNrHKs = HKs, group = group, ...)
+								
 							},
-							'normfinder' = {
+							'NormFinder' = {
 								stopifnot(is.numeric(HKs))
-								selectHKwrapper(ct, method = method, nHKs = HKs, group = group, ...)
+								selectHKwrapper(ct, method = method, minNrHKs = HKs, group = group, ...)
+								
 							}
 							)
 
@@ -65,10 +94,10 @@ deltaCt <- function(ct,
 #' @keywords deltaCT CT genorm normfinder
 #' @importFrom NormqPCR selectHKs geomMean
 selectHKwrapper <- function(x, 
-							method = c('geNorm', 'normfinder'), 
+							method = c('geNorm', 'NormFinder'), 
 							minNrHKs=2, group = NULL, trace=T, na.rm=T, log = T){
 	genes <- selectHKs(t(x), group = group, method = method, minNrHKs = minNrHKs,
-              	log = log, Symbols = colnames(x), trace = trace, na.rm = na.rm)
-	res <- apply(x[names(genes[[1]][1:minNrHKs]),], 2, geomMean)
+              	log = log, Symbols = rownames(x), trace = trace, na.rm = na.rm)
+	res <- apply(x[genes[[1]][1:minNrHKs],], 2, geomMean, na.rm = TRUE)
 	return(res)
 }

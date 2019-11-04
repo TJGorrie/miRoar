@@ -4,7 +4,7 @@
 \alias{selectHKwrapper}
 \title{A wrapper for the selectHKs function}
 \usage{
-selectHKwrapper(x, method = c("geNorm", "normfinder"), minNrHKs = 2,
+selectHKwrapper(x, method = c("geNorm", "NormFinder"), minNrHKs = 2,
   group = NULL, trace = T, na.rm = T, log = T)
 }
 \arguments{
