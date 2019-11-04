@@ -14,5 +14,5 @@
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
 updateHistory <- function(x, timepoint0, message){
-   UseMethod("updateHistory", x)
+    UseMethod("updateHistory", x)
 }
