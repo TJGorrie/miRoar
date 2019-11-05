@@ -155,6 +155,7 @@ batchReadEDS <- function(EDSfiles, directory = FALSE, ...){
  
     #hkgmir <- names(which(table(rownames(biglist[[1]]))==16))
     biglist$FN <- sapply(runname, '[', 1)
+    names(biglist$FN) <- colnames(biglist[[1]])
     biglist$history <- data.frame('Submitted' = s, 'Finished' = Sys.time(), 'Comment' = 'Created object')
     class(biglist) <- 'miRoar'
     return(biglist)

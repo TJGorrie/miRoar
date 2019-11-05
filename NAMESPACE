@@ -2,8 +2,10 @@
 
 S3method(deltaCt,matrix)
 S3method(deltaCt,miRoar)
+S3method(subset,miRoar)
 S3method(updateHistory,miRoar)
 export(batchReadEDS)
+export(collapseMultipleReadings)
 export(deltaCt)
 export(readEDS)
 export(updateHistory)

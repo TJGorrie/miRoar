@@ -19,10 +19,6 @@ x
 \description{
 Update History generic
 }
-\examples{
-# readEDS()
-
-}
 \author{
 Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 }

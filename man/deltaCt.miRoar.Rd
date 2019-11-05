@@ -14,9 +14,9 @@
 
 \item{HKs}{Logical, controlled by}
 
-\item{group}{}
+\item{group}{Factor describing the groups each sample belongs to}
 
-\item{...}{}
+\item{...}{Other parameters I have forgotten}
 }
 \value{
 deltaCT values

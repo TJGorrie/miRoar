@@ -8,11 +8,29 @@
 #' 
 #' @return x
 #'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
+updateHistory <- function(x, timepoint0, message){
+    UseMethod("updateHistory", x)
+}
+
+#' Collapse multiple of readings miRoar class object or Ct matrix
+#'
+#' Collapses multiple readings into a single reading, reported as either the mean or median value
+#'
+#' @param x a Crt matrix or miRoar object
+#' @param method Which method to compute average readings for
+#' @return x
+#'
 #' @examples
 #' # readEDS()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
-updateHistory <- function(x, timepoint0, message){
-    UseMethod("updateHistory", x)
+collapseMultipleReadings <- function(x, method=c('mean', 'median'), na.rm=T){
+    UseMethod('collapseMultipleReadings', x)
+}
+
+setBadSignalsToNA <- function(x, maxCT = 40, minCT = 0, ampVal = 0, conf.val = .8){
+    UseMethod('setBadSignalsToNA', x)
 }
