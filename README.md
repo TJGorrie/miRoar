@@ -19,7 +19,9 @@ devtools::install_github('tjgorrie/miRoar')
 library(miRoar)
 
 raw <- readEDS('pathtofolderwithEDSfiles', dir = TRUE)
-
+process <- setBadSignalsToNA(raw)
+dedup <- subset(process, !duplicated(rownames(process)) )
+normalised <- deltaCt(dedup, method='global')
 
 
 ```
