@@ -26,6 +26,7 @@ updateHistory.miRoar <- function(x, timepoint0, message){
 #' Calculate delta Ct values using global, endogenous, genorm or normfinder
 #'
 #' @param ct character, The file name to be read in
+#' @param which Which Ct matrix should be normalised ('Ct', 'Crt' or 'CtAvg')
 #' @param method Logical, whether or not some message are output
 #' @param HKs Logical, controlled by 
 #' @param group Factor describing the groups each sample belongs to
@@ -47,10 +48,11 @@ deltaCt.miRoar <- function(ct,
     t0 <- Sys.time()
     # These should be done outside!
     ct2 <- ct$CtAvg
+    
     amp <- ct$CrtAmp
     is.na(ct2) <- ct2 <= 0 | ct2 >= 40
     is.na(ct2) <- amp == -1
-    ct3 <- ct2[!duplicated(rownames(ct2)),]
+    ct3 <- ct2#[!duplicated(rownames(ct2)),]
     dct <- deltaCt(ct3, method = method, HKs = HKs, group = group, ...)
     message('Adding dCT to miRoar object')
     ct$dCT <- dct
@@ -100,9 +102,8 @@ nrow.miRoar <- function(x) dim(x)[1]
 
 ncol.miRoar <- function(x) dim(x)[2]
 
-rownames.miRoar <- function(x) rownames(x[['CtAvg']])
-
-colnames.miRoar <- function(x) colnames(x[['CtAvg']])
+getRownames <- function(x) rownames(x[['CtAvg']])
+getColnames <- function(x) colnames(x[['CtAvg']])
 
 # broken
 collapseMultipleReadings.miRoar <- function(x, method=c('mean', 'median'), na.rm=T){
@@ -115,8 +116,8 @@ collapseMultipleReadings.miRoar <- function(x, method=c('mean', 'median'), na.rm
                 rn <- rownames(y)
                 new <- t(sapply(unique(rn), function(i, y, method, na.rm){
                             res <- switch(method, 
-                                'mean' = colMeans(t(as.matrix(y[rownames(y) %in% i, ])), na.rm=na.rm),
-                                'median' = colMedians(t(as.matrix(y[rownames(y) %in% i, ])), na.rm=na.rm))
+                                'mean' = colMeans(t(as.matrix(y[rownames(y) %in% i, , drop=F])), na.rm=na.rm),
+                                'median' = colMedians(t(as.matrix(y[rownames(y) %in% i,,drop=F])), na.rm=na.rm))
                             return(res)
                         },y=y, method=method, na.rm=na.rm))
                 return(new)
@@ -124,8 +125,8 @@ collapseMultipleReadings.miRoar <- function(x, method=c('mean', 'median'), na.rm
                 rn <- rownames(y)
                 new <- t(sapply(unique(rn), function(i, y, method, na.rm){
                             res <- switch(method, 
-                                'mean' = colMeans(t(as.matrix(y[rownames(y) %in% i,, ])), na.rm=na.rm),
-                                'median' = colMedians(t(as.matrix(y[rownames(y) %in% i,,])), na.rm=na.rm))
+                                'mean' = colMeans(as.matrix(y[rownames(y) %in% i,, ,drop=F]), na.rm=na.rm),
+                                'median' = colMedians(as.matrix(y[rownames(y) %in% i,,,drop=F]), na.rm=na.rm))
                             return(res)
                         },y=y, method=method, na.rm=na.rm))
                 return(new)
@@ -151,4 +152,13 @@ setBadSignalsToNA.miRoar <- function(x, maxCT = 40, minCT = 0, ampVal = 0, conf.
     return(x)
 }
 
+removeBadSignals <- function(x, perc = 1) UseMethod('removeBadSignals', x)
+removeBadSignals.miRoar <- function(x, perc = 1){
+    s <- Sys.time()
+    z <- rowSums(is.na(x[['Crt']]))
+    thresh <- ncol(x)*perc
+    xx <- subset(x, i = !z >= 1)
+    xx <- updateHistory(xx, s, 'Removed miRs with no signal')
+    return(xx)
+}
 

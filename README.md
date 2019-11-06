@@ -18,10 +18,22 @@ devtools::install_github('tjgorrie/miRoar')
 ```
 library(miRoar)
 
+# Read in Data
 raw <- readEDS('pathtofolderwithEDSfiles', dir = TRUE)
+
+# Perform light filtering according to manufacturers defaults
 process <- setBadSignalsToNA(raw)
-dedup <- subset(process, !duplicated(rownames(process)) )
-normalised <- deltaCt(dedup, method='global')
+
+# Remove deduplicated observations
+dedup <- subset(process, which(!duplicated(getRownames(process))) )
+
+# Calculate delta Ct values using global normalisation and the Crt values
+normalised <- deltaCt(dedup, which = 'Crt', method='global')
+
+noSig <- removeBadSignals(dedup)
+
+# Extract dCt values for analysis 
+dCrt <- noSig$dCt
 
 
 ```

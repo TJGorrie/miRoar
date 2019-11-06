@@ -17,6 +17,8 @@
 \item{group}{Factor describing the groups each sample belongs to}
 
 \item{...}{Other parameters I have forgotten}
+
+\item{which}{Which Ct matrix should be normalised ('Ct', 'Crt' or 'CtAvg')}
 }
 \value{
 deltaCT values

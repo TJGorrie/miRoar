@@ -15,7 +15,7 @@
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
-deltaCt <- function(ct, 
+deltaCt <- function(ct,
                     method = c('global', 'endogenous','geNorm', 'NormFinder'), 
                     HKs = NULL, 
                     group = NULL,
@@ -45,7 +45,7 @@ deltaCt <- function(ct,
 #' @importFrom NormqPCR geomMean
 #' @importFrom matrixStats colMedians
 #' @export
-deltaCt.matrix <- function(ct, 
+deltaCt.matrix <- function(ct,
                     method = c('global', 'endogenous','geNorm', 'NormFinder'), 
                     HKs = NULL, 
                     group = NULL,
