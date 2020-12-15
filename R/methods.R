@@ -87,6 +87,16 @@ subset.miRoar <- function(x, i, j){
     return(new)
 }
 
+#' Print miRoar object
+#'
+#' Print miRoar object
+#'
+#' @param x object to be printed
+#' 
+#' @return printed miRoar object
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 print.miRoar <- function(x){
     message('Contains:')
     for(i in names(x)) message('\t ', i)
@@ -94,15 +104,65 @@ print.miRoar <- function(x){
     print(x$history)
 }
 
+#' dim miRoar object
+#'
+#' dim miRoar object
+#'
+#' @param x object to be subsetted
+#' 
+#' @return Dimensions
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 dim.miRoar <- function(x){
     dim(x[['CtAvg']])
 }
 
+#' nrow miRoar object
+#'
+#' nrow miRoar object
+#'
+#' @param x object to be subsetted
+#' 
+#' @return nrow miRoar object
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 nrow.miRoar <- function(x) dim(x)[1]
 
+#' ncol miRoar object
+#'
+#' ncol miRoar object
+#'
+#' @param x object to be subsetted
+#' 
+#' @return subsetted miRoar object
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 ncol.miRoar <- function(x) dim(x)[2]
 
+#' rownames miRoar object
+#'
+#' rownames miRoar object
+#'
+#' @param x object to be subsetted
+#' 
+#' @return rownames miRoar object
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 getRownames <- function(x) rownames(x[['CtAvg']])
+
+#' colnames miRoar object
+#' colnames miRoar object
+#'
+#' @param x object to be subsetted
+#' 
+#' @return colnames miRoar object
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 getColnames <- function(x) colnames(x[['CtAvg']])
 
 # broken
@@ -139,6 +199,22 @@ collapseMultipleReadings.miRoar <- function(x, method=c('mean', 'median'), na.rm
     return(woot)
 }
 
+#' Set Bad Signals to NA
+#'
+#' Set Bad Signals to NA
+#'
+#' @param x a miRoar object
+#' @param maxCT a
+#' @param minCT b
+#' @param ampVal c
+#' @param conf.val d
+#' @return x
+#'
+#' @examples
+#' # readEDS()
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 setBadSignalsToNA.miRoar <- function(x, maxCT = 40, minCT = 0, ampVal = 0, conf.val = .8){
     s <- Sys.time()
     detp <- x$Con
@@ -152,7 +228,34 @@ setBadSignalsToNA.miRoar <- function(x, maxCT = 40, minCT = 0, ampVal = 0, conf.
     return(x)
 }
 
+#' Remove Bad Signals
+#'
+#' Remove Bad Signals
+#'
+#' @param x a miRoar object
+#' @param perc a
+#' @return x
+#'
+#' @examples
+#' # readEDS()
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 removeBadSignals <- function(x, perc = 1) UseMethod('removeBadSignals', x)
+
+#' Remove Bad Signals
+#'
+#' Remove Bad Signals
+#'
+#' @param x a miRoar object
+#' @param perc a
+#' @return x
+#'
+#' @examples
+#' # readEDS()
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 removeBadSignals.miRoar <- function(x, perc = 1){
     s <- Sys.time()
     z <- rowSums(is.na(x[['Crt']]))

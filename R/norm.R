@@ -61,12 +61,14 @@ deltaCt.matrix <- function(ct,
                             }, # handle for multiple HKs? geomMean?
                             'geNorm' = {
                                 stopifnot(is.numeric(HKs))
-                                selectHKwrapper(ct, method = method, minNrHKs = HKs, group = group, ...)
+                                # ?
+                                selectHKwrapper(na.omit(ct), method = method, minNrHKs = HKs, group = group, ...)
                                 
                             },
                             'NormFinder' = {
                                 stopifnot(is.numeric(HKs))
-                                selectHKwrapper(ct, method = method, minNrHKs = HKs, group = group, ...)
+                                # ?
+                                selectHKwrapper(na.omit(ct), method = method, minNrHKs = HKs, group = group, ...)
                                 
                             }
                             )
@@ -93,6 +95,7 @@ deltaCt.matrix <- function(ct,
 #' @seealso \code{\link{deltaCT}}
 #' @keywords deltaCT CT genorm normfinder
 #' @importFrom NormqPCR selectHKs geomMean
+#' @export
 selectHKwrapper <- function(x, 
                             method = c('geNorm', 'NormFinder'), 
                             minNrHKs=2, group = NULL, trace=T, na.rm=T, log = T){

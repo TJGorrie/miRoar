@@ -31,6 +31,22 @@ collapseMultipleReadings <- function(x, method=c('mean', 'median'), na.rm=T){
     UseMethod('collapseMultipleReadings', x)
 }
 
+#' Set Bad Signals to NA
+#'
+#' Set Bad Signals to NA
+#'
+#' @param x a miRoar object
+#' @param maxCT a
+#' @param minCT b
+#' @param ampVal c
+#' @param conf.val d
+#' @return x
+#'
+#' @examples
+#' # readEDS()
+#'
+#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @export
 setBadSignalsToNA <- function(x, maxCT = 40, minCT = 0, ampVal = 0, conf.val = .8){
     UseMethod('setBadSignalsToNA', x)
 }
