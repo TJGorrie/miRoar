@@ -5,6 +5,7 @@ The miRoar R package provides a simple framework for analysing RT-qPCR data. Spe
 ## Installation
 The miRoar R package can be installed directly from github by using the devtools R package 
 ```
+BiocManager::install('NormqPCR')
 devtools::install_github('tjgorrie/miRoar')
 ```
 
@@ -19,21 +20,25 @@ devtools::install_github('tjgorrie/miRoar')
 library(miRoar)
 
 # Read in Data
-raw <- readEDS('pathtofolderwithEDSfiles', dir = TRUE)
+raw <- batchReadEDS('pathtofolderwithEDSfiles', dir = TRUE)
 
 # Perform light filtering according to manufacturers defaults
-process <- setBadSignalsToNA(raw)
+process <- setBadSignalsToNA(raw, maxCT = 40, minCT = 0, ampVal = 0, conf.val = .8) # set conf.val to 0 if you want to skip them...
 
-# Remove deduplicated observations
+# Remove deduplicated observations - this step should be replaced with a method to collapse the readings from multiple eds files 
 dedup <- subset(process, which(!duplicated(getRownames(process))) )
 
 # Calculate delta Ct values using global normalisation and the Crt values
 normalised <- deltaCt(dedup, which = 'Crt', method='global')
 
-noSig <- removeBadSignals(dedup)
+# Optional Remove miR that do not appear in a % of samples (1 = 100% of samples)
+noSig <- removeBadSignals(normalised, perc = 1) # remove miRs that do not express in any samples!
 
-# Extract dCt values for analysis 
+noSig
+
+# Finally Extract dCt values for statistical analysis 
 dCrt <- noSig$dCt
+dim(dCrt) # miRs along rows, samples along columns
 
 
 ```
@@ -42,3 +47,4 @@ dCrt <- noSig$dCt
 * S4 methods
 * ddCT analysis
 * More QC
+* Various plotting functions.
