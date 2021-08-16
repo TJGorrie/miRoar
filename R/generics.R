@@ -27,7 +27,7 @@ updateHistory <- function(x, timepoint0, message){
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
-collapseMultipleReadings <- function(x, method=c('mean', 'median'), na.rm=T){
+collapseMultipleReadings <- function(x, method = c("mean", "median"), na.rm=T){
     UseMethod('collapseMultipleReadings', x)
 }
 
@@ -45,7 +45,7 @@ collapseMultipleReadings <- function(x, method=c('mean', 'median'), na.rm=T){
 #' @examples
 #' # readEDS()
 #'
-#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
+#' @author Tyler Gorrie-Stone \email{tyler.gorrie-stone@diamond.ac.uk}
 #' @export
 setBadSignalsToNA <- function(x, maxCT = 40, minCT = 0, ampVal = 0, conf.val = .8){
     UseMethod('setBadSignalsToNA', x)

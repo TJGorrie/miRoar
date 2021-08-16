@@ -1,12 +1,12 @@
 Package: miRoar
 Title: miRoar
-Version: 0.0.1
-Authors@R: person('Tyler', 'Gorrie-Stone', email = 'tgorri@essex.ac.uk', role = c('aut', 'cre'))
+Version: 0.99.0
+Authors@R: person('Tyler', 'Gorrie-Stone', email = 'tyler.gorrie-stone@diamond.ac.uk', role = c('aut', 'cre'))
 Description: Analyse miR RT-qPCR data from EDS files
-Depends: R (>= 3.1.0)
+Depends: R (>= 3.1.0), R6
 Imports: NormqPCR, matrixStats
 Suggests: 
-Collate: norm.R inout.R methods.R generics.R
+Collate: miR.R miRoar.R norm.R inout.R methods.R generics.R
 License:
 LazyData: true
 Encoding: UTF-8
