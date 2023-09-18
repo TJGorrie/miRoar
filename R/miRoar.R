@@ -37,7 +37,7 @@ miRoar <- R6Class(
         },
         dim = function(...){
             c(self$nrow, self$ncol)
-        }
+        },
         # Generate Matrix?
         get_data_matrix = function(
             type=c("Crt_Raw", "Ct", "Avg_Ct",

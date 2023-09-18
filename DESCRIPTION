@@ -6,7 +6,7 @@ Description: Analyse miR RT-qPCR data from EDS files
 Depends: R (>= 3.1.0), R6
 Imports: NormqPCR, matrixStats
 Suggests: 
-Collate: miR.R miRoar.R norm.R inout.R methods.R generics.R
+Collate: inout.R miR.R miRoar.R norm.R methods.R generics.R
 License:
 LazyData: true
 Encoding: UTF-8
