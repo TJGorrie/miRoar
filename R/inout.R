@@ -49,6 +49,12 @@
     return(wells)
 }
 
+
+#' readEDSfiles  read in EDS format data
+#' @param files character vector of file paths
+
+#' @export
+
 readEDSFiles <- function(files){
     s <- Sys.time()
     data <- unlist(lapply(files, .readEDSFile))
