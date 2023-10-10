@@ -18,7 +18,7 @@ x
 Collapses multiple readings into a single reading, reported as either the mean or median value
 }
 \examples{
-# readEDS()
+# readEDSfile()
 
 }
 \author{

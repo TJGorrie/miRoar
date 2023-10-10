@@ -35,7 +35,7 @@ updateHistory.miRoar <- function(x, timepoint0, message){
 #' @return deltaCT values
 #'
 #' @examples
-#' # readEDS()
+#' # readEDSfile()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
@@ -211,7 +211,7 @@ collapseMultipleReadings.miRoar <- function(x, method=c('mean', 'median'), na.rm
 #' @return x
 #'
 #' @examples
-#' # readEDS()
+#' # readEDSfile()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
@@ -237,7 +237,7 @@ setBadSignalsToNA.miRoar <- function(x, maxCT = 40, minCT = 0, ampVal = 0, conf.
 #' @return x
 #'
 #' @examples
-#' # readEDS()
+#' # readEDSfile()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
@@ -252,7 +252,7 @@ removeBadSignals <- function(x, perc = 1) UseMethod('removeBadSignals', x)
 #' @return x
 #'
 #' @examples
-#' # readEDS()
+#' # readEDSfile()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export

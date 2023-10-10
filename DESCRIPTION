@@ -10,4 +10,4 @@ Collate: inout.R miR.R miRoar.R norm.R methods.R generics.R
 License:
 LazyData: true
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.3

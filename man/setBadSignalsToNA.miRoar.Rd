@@ -4,8 +4,7 @@
 \alias{setBadSignalsToNA.miRoar}
 \title{Set Bad Signals to NA}
 \usage{
-\method{setBadSignalsToNA}{miRoar}(x, maxCT = 40, minCT = 0,
-  ampVal = 0, conf.val = 0.8)
+\method{setBadSignalsToNA}{miRoar}(x, maxCT = 40, minCT = 0, ampVal = 0, conf.val = 0.8)
 }
 \arguments{
 \item{x}{a miRoar object}
@@ -25,7 +24,7 @@ x
 Set Bad Signals to NA
 }
 \examples{
-# readEDS()
+# readEDSfile()
 
 }
 \author{

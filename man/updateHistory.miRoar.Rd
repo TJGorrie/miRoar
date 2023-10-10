@@ -19,9 +19,6 @@ x with the history updated with the specified method.
 \description{
 Update History of miRoar class object
 }
-\examples{
-
-}
 \author{
 Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 }

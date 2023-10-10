@@ -20,7 +20,7 @@ devtools::install_github('tjgorrie/miRoar')
 library(miRoar)
 
 # Read in Data
-raw <- batchReadEDS('pathtofolderwithEDSfiles', dir = TRUE)
+raw <- ReadEDSfiles('pathtofolderwithEDSfiles', dir = TRUE)
 
 # Perform light filtering according to manufacturers defaults
 process <- setBadSignalsToNA(raw, maxCT = 40, minCT = 0, ampVal = 0, conf.val = .8) # set conf.val to 0 if you want to skip them...

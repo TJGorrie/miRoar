@@ -23,7 +23,7 @@ updateHistory <- function(x, timepoint0, message){
 #' @return x
 #'
 #' @examples
-#' # readEDS()
+#' # readEDSfile()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
@@ -43,7 +43,7 @@ collapseMultipleReadings <- function(x, method = c("mean", "median"), na.rm=T){
 #' @return x
 #'
 #' @examples
-#' # readEDS()
+#' # readEDSfile()
 #'
 #' @author Tyler Gorrie-Stone \email{tyler.gorrie-stone@diamond.ac.uk}
 #' @export

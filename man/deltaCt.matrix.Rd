@@ -4,8 +4,13 @@
 \alias{deltaCt.matrix}
 \title{Calculate delta Ct values from CT values using a variety of methods}
 \usage{
-\method{deltaCt}{matrix}(ct, method = c("global", "endogenous", "geNorm",
-  "NormFinder"), HKs = NULL, group = NULL, ...)
+\method{deltaCt}{matrix}(
+  ct,
+  method = c("global", "endogenous", "geNorm", "NormFinder"),
+  HKs = NULL,
+  group = NULL,
+  ...
+)
 }
 \arguments{
 \item{ct}{character, The file name to be read in}
@@ -25,11 +30,11 @@ deltaCT values
 Calculate delta Ct values using global, endogenous, genorm or normfinder
 }
 \examples{
-# readEDS()
+# readEDSfile()
 
 }
 \seealso{
-\code{\link{batchReadEDS}}
+\code{\link{readEDSfiles}}
 }
 \author{
 Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}

@@ -18,7 +18,7 @@ x
 Remove Bad Signals
 }
 \examples{
-# readEDS()
+# readEDSfile()
 
 }
 \author{

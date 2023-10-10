@@ -74,9 +74,9 @@ Well <- R6Class(
 
 
 
-mirror <- readEDSFiles(files)
-dat <- mirror$CT_Matrix(type='Ct', collapse_multiple_readings ='median')
-mirror$history
-mirror$history <- generateHistoryLine(Sys.time(), 'abc')
+#mirror <- readEDSFiles(files)
+#dat <- mirror$CT_Matrix(type='Ct', collapse_multiple_readings ='median')
+#mirror$history
+#mirror$history <- generateHistoryLine(Sys.time(), 'abc')
 
 

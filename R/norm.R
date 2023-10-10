@@ -11,7 +11,7 @@
 #' @return deltaCT values
 #'
 #' @examples
-#' # readEDS()
+#' # readEDSfile()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
 #' @export
@@ -37,10 +37,10 @@ deltaCt <- function(ct,
 #' @return deltaCT values
 #'
 #' @examples
-#' # readEDS()
+#' # readEDSfile()
 #'
 #' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
-#' @seealso \code{\link{batchReadEDS}}
+#' @seealso \code{\link{readEDSfiles}}
 #' @keywords deltaCT CT genorm normfinder
 #' @importFrom NormqPCR geomMean
 #' @importFrom matrixStats colMedians
