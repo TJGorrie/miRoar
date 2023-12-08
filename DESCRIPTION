@@ -1,8 +1,8 @@
 Package: miRoar
 Title: miRoar
-Version: 0.99.0
-Authors@R: person('Tyler', 'Gorrie-Stone', email = 'tyler.gorrie-stone@diamond.ac.uk', role = c('aut', 'cre'))
-Description: Analyse miR RT-qPCR data from EDS files
+Version: 0.99.1
+Authors@R: person('Tyler', 'Gorrie-Stone', email = 'tyler.gorrie-stone@genomicsplc.com', role = c('aut', 'cre'))
+Description: Analyse RT-qPCR data from EDS files
 Depends: R (>= 3.1.0), R6
 Imports: NormqPCR, matrixStats
 Suggests: 
