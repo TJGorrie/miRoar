@@ -1,19 +1,3 @@
-#' Update History of miRoar class object
-#'
-#' Update History generic
-#'
-#' @param x character, The file name to be read in
-#' @param timepoint0 Logical, whether or not some message are output
-#' @param message Logical, controlled by 
-#' 
-#' @return x
-#'
-#' @author Tyler Gorrie-Stone \email{tgorri@essex.ac.uk}
-#' @export
-updateHistory <- function(x, timepoint0, message){
-    UseMethod("updateHistory", x)
-}
-
 #' Collapse multiple of readings miRoar class object or Ct matrix
 #'
 #' Collapses multiple readings into a single reading, reported as either the mean or median value
