@@ -24,28 +24,6 @@ deltaCt <- function(ct,
     UseMethod("deltaCt", ct)
 }
 
-deltaCt.Experiment <- function(
-    ct, 
-    method = c('global', 'endogenous','geNorm', 'NormFinder'), 
-    HKs = NULL, 
-    group = NULL,
-    ...
-){
-    t0 <- Sys.time()
-    # These should be done outside!
-    ct2 <- ct$CtAvg
-    
-    amp <- ct$CrtAmp
-    is.na(ct2) <- ct2 <= 0 | ct2 >= 40
-    is.na(ct2) <- amp == -1
-    ct3 <- ct2#[!duplicated(rownames(ct2)),]
-    dct <- deltaCt(ct3, method = method, HKs = HKs, group = group, ...)
-    message('Adding dCT to miRoar object')
-    ct$dCT <- dct
-    ct <- updateHistory(ct, t0, sprintf('Calculate deltaCT using %s', method))
-    return(ct)
-}
-
 #' Calculate delta Ct values from CT values using a variety of methods
 #'
 #' Calculate delta Ct values using global, endogenous, genorm or normfinder

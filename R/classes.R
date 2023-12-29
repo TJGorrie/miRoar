@@ -17,7 +17,10 @@ Experiment <- R6::R6Class("Experiment",
             }
         },
         get = function(x, deep=FALSE) {
-            if(deep) sapply(private[['plates']], function(plate) plate$get(x, deep=TRUE))
+            if(deep) {
+                data <- lapply(private[['plates']], function(plate) plate$get(x, deep=TRUE))
+                abind::abind(data, along=2)
+            }
             else private[[x]]
         },
         updateHistory = function(timepoint0, message) {
@@ -71,30 +74,40 @@ Plate <- R6::R6Class("Plate",
         initialize = function(x, details){
             private[['wells']] <- x
             private[['.plate_name']] <- details$BarCode
+            private[['.plate_path']] <- details$input_path
         },
         get = function(x, deep=FALSE) {
             if(deep){
                 wd <- private[['wells']]
-                sample_name <- sapply(wd, function(well) well$get('Sample'))
-                detector_name <- sapply(wd, function(well) well$get('Detector'))
-                well_values <- sapply(wd, function(well) well$get(x))
-                if(length(well_values > length(sample_name))){
-                    browser()
-                    # Convert to array?
+                sample_name <- sapply(wd, function(well) as.vector(well$get('Sample')))
+                detector_name <- sapply(wd, function(well) as.vector(well$get('Detector')))
+                well_values <- sapply(wd, function(well) as.vector(well$get(x)))
+                if(length(well_values) > length(sample_name)){
+                    data <- array(
+                        NA,
+                        dim=c(length(unique(detector_name)), length(unique(sample_name)), nrow(well_values)),
+                        dimnames=list(unique(detector_name), unique(sample_name), seq_len(nrow(well_values)))
+                    )
+                    for(well_id in colnames(well_values)) data[detector_name[well_id], sample_name[well_id],] <- well_values[,well_id]
+                    return(data)
                 } else {
-                    # Must be an easier way, check SO.
-                    df <- data.frame(x=well_values, 'sample_name' = sample_name, 'detector' = detector_name)
-                    sdf <- split(df, df$sample_name)
-                    data <- do.call('cbind', lapply(sdf, function(x) {y <- x$x; names(y) <- x$detector; return(y)}))
+                    data <- matrix(
+                        NA,
+                        nrow=length(unique(detector_name)),
+                        ncol=length(unique(sample_name))
+                    )
+                    rownames(data) <- unique(detector_name)
+                    colnames(data) <- unique(sample_name)
+                    for(well_id in names(well_values)) data[detector_name[well_id], sample_name[well_id]] <- well_values[well_id]
+                    return(data)
                 }
-                return(data)
-
             } else return(private[[x]])
         }
     ),
     private = list(
         "wells" = NA,
-        ".plate_name" = NA
+        ".plate_name" = NA,
+        ".plate_path" = NA
     ),
     active = list(
         sample_names = function(value){
@@ -114,6 +127,13 @@ Plate <- R6::R6Class("Plate",
         plate_name = function(value){
             if(missing(value)){
                 private$.plate_name
+            } else {
+                stop("Stop")
+            }
+        },
+        plate_path = function(value){
+            if(missing(value)){
+                private$.plate_path
             } else {
                 stop("Stop")
             }

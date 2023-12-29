@@ -5,9 +5,10 @@ Authors@R: person('Tyler', 'Gorrie-Stone', email = 'tyler.gorrie-stone@genomicsp
 Description: Analyse RT-qPCR data from EDS files
 Depends: R (>= 3.1.0)
 Imports: R6, NormqPCR, matrixStats
-Suggests: 
+Suggests: knitr, rmarkdown 
 Collate: inout.R generics.R classes.R methods.R norm.R
 License:
 LazyData: true
 Encoding: UTF-8
 RoxygenNote: 7.2.3
+VignetteBuilder: knitr

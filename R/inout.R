@@ -1,9 +1,25 @@
+#' Safely convert a string to a numeric
+#' 
+#' Will convert empty strings or strings that contain a single whitespace to a 0.
+#' Typically used internally
+#'
+#' @param x A character vector to be converted
+#' @return A numeric vector or a character vector if it cannot be converted losslessly
 .safe.as.numeric <- function(x){
     # Set "" or " " to zero for convenience.
     x[(x == " " | x == "")] <- 0
     ifelse(is.na(as.numeric(x)), x, as.numeric(x))
 }
 
+
+#' Process the EDS Analysis Table
+#' 
+#' The EDS analysis table contains various rows where there are typically 3-4 rows per well.
+#' Each row will contain a different set of information that needs to be handled
+#'
+#' @param data A tab-separated string containing the information for a particular well
+#' @param colheads A string of column headers to apply to the cycle threshold values.
+#' @return A list of named components and their values for a given Well.
 .processAnalysisTable <- function(data, colheads){
     pieces <- strsplit(data, '\t')
     CTVals <- pieces[[1]]
@@ -13,6 +29,9 @@
     RnVals <- matrix(nrow=40, .safe.as.numeric(pieces[[2]][-1]))
     dRnVals <- matrix(nrow=40, .safe.as.numeric(pieces[[3]][-1]))
     # Need to give these names!!!!!!!
+    # Column 4 is Amp Score and Column 5 is CRT Value
+    # Hard to get an idea over what columns 1, 2 and 3 are...
+    # I suspect column 3 is the dRN value above threshold where the Crt is detected
     cRTVals <- matrix(ncol=5, .safe.as.numeric(pieces[[4]][-1]))
     return(list(
         "Well" = CTVals[1],
@@ -26,6 +45,16 @@
     ))
 }
 
+
+#' Extract and parse the contents of an EDS file
+#' 
+#' Currently this function is not yet complete, I still would like to spend time
+#' delving into the other files to see how this information can be used in the wells.
+#'
+#' @param in_path The input path to an EDS file.
+#' @param out_path The output path to extract an EDS file to
+#' @param verbose Boolean, whether or not messages are printed to console
+#' @return The contents of the extract EDS file in the form of a Plate R6 object.
 #' @importFrom tools file_path_sans_ext
 #' @importFrom glue glue
 #' @importFrom XML xmlToList
@@ -99,29 +128,63 @@
         if(well_name %in% names(processed_well_data)) processed_well_data[[well_name]][['amp_score']] <- amp_scores[i,3]
     }
     WellData <- sapply(processed_well_data, function(x) Well$new(x))
+    plate_setup_xmllist$input_path <- in_path
     plate <- Plate$new(WellData, plate_setup_xmllist)
     return(plate)
 }
 
+
+#' Process a set of EDS files
+#' 
+#' 
+#'
+#' @param input_path A number.
+#' @param verbose A number.
+#' @return A number.
+#' @examples
+#' add(1, 1)
+#' add(10, 1)
 #' @importFrom glue glue
-processEDSFiles <- function(input_path, verbose=TRUE){
-    edsTarget <- file.path(input_path, '*.eds')
-    allEds <- Sys.glob(edsTarget)[1:2]
+processEDSFiles <- function(input_path, directory=TRUE, verbose=TRUE){
+    if(directory){
+        edsTarget <- file.path(input_path, '*.eds')
+        allEds <- Sys.glob(edsTarget)
+        ext_folder <- file.path(getwd(), 'ext')
+    } else {
+        allEds <- input_path
+        ext_folder <- file.path(getwd(), 'ext')
+    }
+    if(file.exists(ext_folder)) stop(glue::glue("{ext_folder} already exists, will not proceed"))
     n_eds <- length(allEds)
     if(verbose) message(glue::glue("{n_eds} files found!"))
-    ext_folder <- file.path(input_path, 'ext')
-    if(file.exists(ext_folder)) stop(glue::glue("{ext_folder} already exists, will not proceed"))
     dir.create(ext_folder)
     Plates <- sapply(allEds, .extractEDSFile, out_path=ext_folder, verbose=verbose)
     unlink(ext_folder, recursive=TRUE)
     return(Plates)
 }
 
+
+#' Add together two numbers
+#'
+#' @param x A number.
+#' @param y A number.
+#' @return A number.
+#' @examples
+#' add(1, 1)
+#' add(10, 1)
 #' @export
-readEDSExperiment <- function(input_directory){
+readEDSExperiment <- function(input, directory=TRUE, verbose=TRUE){
     s <- Sys.time()
-    plates <- processEDSFiles(input_directory)
+    plates <- processEDSFiles(input, directory, verbose)
     out <- Experiment$new(plates, input_path)
-    updateHistory(out, s, glue::glue("Create EDSExperiment with {n_plates(out)} plates, {n_samples(out)} samples, {n_detectors(out)} detectors"))  
+    updateHistory(out, s, glue::glue("Create EDSExperiment with {n_plates(out)} plates, {n_samples(out)} samples, {n_detectors(out)} detectors"))
+    detector_lengths <- table(sapply(out[['plates']], n_detectors))
+    if(length(detector_lengths > 1)){
+        warning(glue::glue(
+            "Detected differing numbers of detectors between plates, \n",
+            "consider separating plates into separete experiment objects or the intersection of detectors before analysis \n", 
+            "You can find the intersect with: table(unlist(sapply(my_experiment[['plates']], detector_names))) \n")
+        )
+    }
     return(out)             
 }

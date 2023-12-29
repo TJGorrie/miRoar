@@ -1,0 +1,124 @@
+---
+title: "qPCR Experiment"
+output: rmarkdown::html_vignette
+package: qPCRExperiment
+vignette: >
+  %\VignetteIndexEntry{qPCR Experiment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Installation
+```{r, echo=TRUE, eval=FALSE}
+if(!require(qPCRExperiment)){
+    BiocManager::install('NormqPCR')
+    devtools::install_github('tjgorrie/miRoar')
+}
+library(qPCRExperiment)
+```
+```{r, eval=TRUE, echo=FALSE}
+library(qPCRExperiment)
+```
+
+# Data Import
+Importing data into R using the `qPCRExperiment` is very easy.
+```{r, echo=TRUE, eval=TRUE}
+input_directory <- system.file('extdata', 'edsfiles', package='qPCRExperiment')
+example_experiment <- readEDSExperiment(input_directory, directory=TRUE, verbose=FALSE)
+# As this example data contains two experiments with differing number of detectors we need to run
+# the following steps, it is unlikely you would need to do this if you aren't mixing experiments as we are.
+# Filter data to detectors present in all samples (in this case 6)
+shared_detectors <- names(which(table(unlist(sapply(example_experiment[['plates']], detector_names))) == 6))
+example_experiment <- example_experiment[shared_detectors,,]
+print(example_experiment)
+```
+
+# The `Experiment` Object
+The `Experiment` object attempts to collect together all the infomation from multiple EDS files. 
+From the top-level down, the experiment contains a list of `Plate`s which are each individual EDS file that goes into
+making the `Experiment` object. Within each `Plate` there are a list of `Well`s that contains the actual information from
+the experiment. The data is organised in such a way that you should only ever need to interact with the `Experiment` and can 
+manipulate the data as needed without ever changing the values inside the `Well`s
+
+# Basic Processing
+
+Experiment objects can be filtered using `[` methods to manipulate the number of samples, detectors or plates that 
+we wish to analyse.
+```{r, echo=TRUE, eval=FALSE}
+example_experiment[detector_names,sample_names,plate_names]
+```
+
+```{r, echo=TRUE, eval=TRUE}
+head(detector_names(example_experiment))
+example_experiment[c("hsa-miR-937-3p_479212_mir", "hsa-miR-938_479214_mir", "hsa-miR-939-5p_478245_mir"),,]
+
+sample_names(example_experiment)
+example_experiment[,c("SALIVA-A", "SALIVA-B"),]
+
+plate_names(example_experiment)
+example_experiment[,,c("BXF34")]
+```
+
+# Examplar Quality Control
+The `Experiment` object contains a couple of varieties cycle threshold values, Namely `Ct` and `Crt Raw`. These can be accessed via the `get` method:
+```{r}
+# The `deep=TRUE` argument lets the experiment object see data into the wells.
+ct_vals <- example_experiment$get('Avg Ct', deep=TRUE)
+plot(density(ct_vals))
+crt_vals <- example_experiment$get('Crt Raw', deep=TRUE)
+plot(density(crt_vals))
+crt_amp <- example_experiment$get('Crt Amp', deep=TRUE)
+plot(density(crt_amp))
+raw_amp <- example_experiment$get('Raw Amp Score', deep=TRUE)
+plot(density(raw_amp))
+cq_conf <- example_experiment$get('Cq Conf', deep=TRUE)
+plot(density(cq_conf))
+```
+
+For our analysis in xyz paper, we used a min `Cq Conf` of 0.8, A min `Crt Amp` of 0 and also limited our
+analyses to 0 and 40.
+Seeing as we extracted the raw data we can simply apply the filters to the objects in memory.
+```{r}
+crt_vals_filtered <- crt_vals
+is.na(crt_vals_filtered) <- cq_conf < 0.8 | crt_amp < 0 | crt_vals <= 0 | crt_vals >= 40
+dim(na.omit(crt_vals))
+dim(na.omit(crt_vals_filtered))
+```
+
+# Calculating dCT Values
+We provide a fancy method
+```{r}
+# Use global median to calculate dCt Values
+global_dct <- deltaCt(crt_vals_filtered, method="global")
+
+# Pick 1 or more HKs to use as factors (uses geometric mean of selected HKs)
+endogenous_dct <- deltaCt(crt_vals_filtered, method="endogenous", HKs=c("hsa-miR-598-3p_478172_mir"))
+
+# Perform geNorm method and use 10 HKs
+genorm_dct <- deltaCt(crt_vals_filtered, method="geNorm", HKs=10)
+# Perform NormFinder method and use 10 HKs, finding stable HKs between groups!
+normfinder_dct <- deltaCt(crt_vals_filtered, method="NormFinder", HKs=10, group=c(1,2,2,1,1,2))
+
+plot(density(na.omit(global_dct)))
+lines(density(na.omit(endogenous_dct)), col=2)
+lines(density(na.omit(genorm_dct)), col=3)
+lines(density(na.omit(normfinder_dct)), col=4)
+```
+
+## FAQS
+
+### Some of my plates have differing numbers of detectors how should I proceed
+You can simply keep the plates with the incorrect number of detectors
+```{r}
+input_directory <- system.file('extdata', 'edsfiles', package='qPCRExperiment')
+example_experiment <- readEDSExperiment(input_directory, directory=TRUE, verbose=FALSE)
+print(sapply(example_experiment[['plates']], n_detectors))
+plates_to_keep <- plate_names(example_experiment)[sapply(example_experiment[['plates']], n_detectors) == 754]
+example_experiment[,,plates_to_keep]
+```
+or keep an intersection of the detectors present in all 
+```{r}
+print(head(table(unlist(sapply(example_experiment[['plates']], detector_names)))))
+shared_detectors <- names(which(table(unlist(sapply(example_experiment[['plates']], detector_names))) == 6))
+example_experiment[shared_detectors,,]
+```
