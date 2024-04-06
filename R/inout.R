@@ -23,6 +23,10 @@
 .processAnalysisTable <- function(data, colheads){
     pieces <- strsplit(data, '\t')
     CTVals <- pieces[[1]]
+    # Handle missing CRT Values?
+    if(length(pieces[[4]] == 1)){
+        colheads <- colheads[!colheads == 'Crt Raw']
+    }
     names(CTVals) <- colheads
     CTNums <- .safe.as.numeric(CTVals[-c(1,2,3,4)])
     names(CTNums) <- colheads[-c(1,2,3,4)]
@@ -176,7 +180,7 @@ processEDSFiles <- function(input_path, directory=TRUE, verbose=TRUE){
 readEDSExperiment <- function(input, directory=TRUE, verbose=TRUE){
     s <- Sys.time()
     plates <- processEDSFiles(input, directory, verbose)
-    out <- Experiment$new(plates, input_path)
+    out <- Experiment$new(plates, input)
     updateHistory(out, s, glue::glue("Create EDSExperiment with {n_plates(out)} plates, {n_samples(out)} samples, {n_detectors(out)} detectors"))
     detector_lengths <- table(sapply(out[['plates']], n_detectors))
     if(length(detector_lengths > 1)){

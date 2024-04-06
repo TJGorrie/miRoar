@@ -1,6 +1,6 @@
 Package: qPCRExperiment
 Title: qPCRExperiment
-Version: 0.99.1
+Version: 0.99.2
 Authors@R: person('Tyler', 'Gorrie-Stone', email = 'tyler.gorrie-stone@genomicsplc.com', role = c('aut', 'cre'))
 Description: Analyse RT-qPCR data from EDS files
 Depends: R (>= 3.1.0)

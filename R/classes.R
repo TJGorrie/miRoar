@@ -1,5 +1,3 @@
-input_path <- "/Users/tyler/Downloads/Schizophrenia_miRNA_data/RE-ANALYSED"
-
 #' @export
 generateHistoryLine <- function(timepoint0, message){
     data.frame('Submitted' = timepoint0, 'Finished' = Sys.time(), 'Comment' = message)
@@ -158,7 +156,15 @@ Well <- R6::R6Class("Well",
             # These need to be broken up...
             private[['cRT Matrix']] <- x$cRTValues
             # These should be explicitly named...
-            for(i in names(x[['CTValues']])) private[[i]] <- x[['CTValues']][i]
+            for(i in names(x[['CTValues']])){
+                # Error handling for future 
+                if(!i %in% names(private)){
+                    warning(glue::glue("{i} is not a known field"))
+                } else {
+                    private[[i]] <- x[['CTValues']][i]
+                }
+                
+            }
         },
         get = function(x) return(private[[x]])
     ),
@@ -183,7 +189,8 @@ Well <- R6::R6Class("Well",
         "Crt Amp" = NA,
         "Crt Raw" = NA,
         "Cq Conf" = NA,
-        "Plate" = NA
+        "Plate" = NA,
+        "Ct SE" = NA
     ),
     active = list(
         sample_name = function(value) if(missing(value)) private[['Sample']] else stop("Stop"),
